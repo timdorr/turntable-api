@@ -1,0 +1,3 @@
+A Node.js Turntable API client
+
+More details coming soon...
