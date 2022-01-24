@@ -1,0 +1,24 @@
+{
+  "name": "turntable-api",
+  "version": "1.0.0",
+  "description": "An API wrapper for the turntable.fm service",
+  "author": "Tim Dorr <npm@timdorr.com>",
+  "license": "MIT",
+  "main": "src/index.ts",
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@types/ws": "^8.2.2",
+    "@typescript-eslint/eslint-plugin": "^5.10.0",
+    "@typescript-eslint/parser": "^5.10.0",
+    "eslint": "^8.7.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.5.1",
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "ws": "^8.4.2"
+  }
+}
