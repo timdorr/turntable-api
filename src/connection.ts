@@ -1,5 +1,5 @@
 import WebSocket, { RawData } from 'ws'
-import Message, { APIMessage, CommandMessage, ResponseMessage } from './messages'
+import Message, { APIMessage, CommandMessage, ResponseMessage } from './types/messages'
 
 const DEFAULT_HOST = 'wss://chat1.turntable.fm:8080/socket.io/websocket'
 
@@ -41,7 +41,7 @@ class Connection {
 
   onMessage = (data: RawData) => {
     const message = this.parseMessage(data)
-    if (this.debug) console.log('onMessage: %s', message)
+    if (this.debug) console.log('onMessage', message)
 
     if (typeof message == 'string') {
       if (message == 'no_session') this.handleMessage(message)
@@ -53,7 +53,7 @@ class Connection {
   sendMessage(message: APIMessage) {
     const { msgid, clientid, userid, userauth } = this
     const data = JSON.stringify({ msgid, clientid, userid, userauth, ...message })
-    if (this.debug) console.log('sendMessage: %s', data)
+    if (this.debug) console.log('sendMessage', data)
 
     this.socket.send(`~m~${data.length}~m~${data}`)
     this.msgid++
