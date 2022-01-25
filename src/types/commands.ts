@@ -97,6 +97,12 @@ export interface NewSong extends CommandMessage {
   room: Room
 }
 
+export interface NoSong extends CommandMessage {
+  command: 'nosong'
+  roomid: string
+  room: Room
+}
+
 export interface UpdateVotes extends CommandMessage {
   command: 'update_votes'
   roomid: string

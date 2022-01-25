@@ -2,7 +2,7 @@ import Connection, { MessageCallback } from './connection'
 import { sha1 } from './utils'
 
 import type { CommandMessage } from './types/messages'
-import type { AddDJ, Deregistered, NewSong, Registered, RemoveDJ, Speak, UpdateVotes } from './types/commands'
+import type { AddDJ, Deregistered, NewSong, NoSong, Registered, RemoveDJ, Speak, UpdateVotes } from './types/commands'
 
 export type EventHandler<MessageType = CommandMessage> = (m: MessageType) => void
 
@@ -21,8 +21,8 @@ class Turntable {
   eventHandlers: Record<string, EventHandler[]> = {}
 
   roomId?: string
-  currentDjId?: string
-  currentSongId?: string
+  currentDjId: string | null = null
+  currentSongId: string | null = null
 
   constructor(options: TurntableOptions) {
     this.options = options
@@ -37,6 +37,7 @@ class Turntable {
   on(event: AddDJ['command'], handler: EventHandler<AddDJ>): void
   on(event: RemoveDJ['command'], handler: EventHandler<RemoveDJ>): void
   on(event: NewSong['command'], handler: EventHandler<NewSong>): void
+  on(event: NoSong['command'], handler: EventHandler<NoSong>): void
   on(event: UpdateVotes['command'], handler: EventHandler<UpdateVotes>): void
   on(event: Speak['command'], handler: EventHandler<Speak>): void
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,6 +49,14 @@ class Turntable {
     if (message == 'no_session') {
       this.authenticate()
     } else {
+      if (message.command == 'newsong') {
+        this.currentDjId = (message as NewSong).room.metadata.current_dj
+        this.currentSongId = (message as NewSong).room.metadata.current_song._id
+      } else if (message.command == 'nosong') {
+        this.currentDjId = null
+        this.currentSongId = null
+      }
+
       this.eventHandlers[message.command]?.forEach(handler => handler.apply(this, [message]))
     }
   }
