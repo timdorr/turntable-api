@@ -2,8 +2,9 @@ import Connection, { MessageCallback } from './connection'
 import { sha1 } from './utils'
 
 import type { CommandMessage } from './types/messages'
+import type { AddDJ, Deregistered, NewSong, Registered, RemoveDJ, Speak, UpdateVotes } from './types/commands'
 
-export type EventHandler = (m: CommandMessage) => void
+export type EventHandler<MessageType = CommandMessage> = (m: MessageType) => void
 
 export interface TurntableOptions {
   host?: string
@@ -31,7 +32,15 @@ class Turntable {
     setInterval(() => this.updatePresence(), 10000)
   }
 
-  on(event: string, handler: EventHandler) {
+  on(event: Registered['command'], handler: EventHandler<Registered>): void
+  on(event: Deregistered['command'], handler: EventHandler<Deregistered>): void
+  on(event: AddDJ['command'], handler: EventHandler<AddDJ>): void
+  on(event: RemoveDJ['command'], handler: EventHandler<RemoveDJ>): void
+  on(event: NewSong['command'], handler: EventHandler<NewSong>): void
+  on(event: UpdateVotes['command'], handler: EventHandler<UpdateVotes>): void
+  on(event: Speak['command'], handler: EventHandler<Speak>): void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  on(event: string, handler: EventHandler<any>) {
     this.eventHandlers[event] ? this.eventHandlers[event].push(handler) : (this.eventHandlers[event] = [handler])
   }
 
@@ -86,7 +95,7 @@ class Turntable {
     return this.conn.sendMessage({ api: 'room.boot_user', roomid: this.roomId, target_userid, reason })
   }
 
-  startDJing() {
+  addDJ() {
     return this.conn.sendMessage({ api: 'room.add_dj', roomid: this.roomId })
   }
 

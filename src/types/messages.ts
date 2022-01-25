@@ -7,6 +7,7 @@ export interface ResponseMessage {
 
 export interface CommandMessage {
   command: string
+  success: boolean
 }
 
 export interface APIMessage extends Record<string, unknown> {
