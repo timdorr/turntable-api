@@ -44,10 +44,7 @@ class Turntable {
   }
 
   join(roomid: string) {
-    return this.conn.sendMessage({
-      api: 'room.register',
-      roomid
-    })
+    return this.conn.sendMessage({ api: 'room.register', roomid })
   }
 }
 

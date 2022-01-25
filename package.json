@@ -4,7 +4,7 @@
   "description": "An API wrapper for the turntable.fm service",
   "author": "Tim Dorr <npm@timdorr.com>",
   "license": "MIT",
-  "main": "src/index.ts",
+  "main": "src/turntable.ts",
   "scripts": {
     "lint": "eslint ."
   },
