@@ -117,6 +117,12 @@ export interface UpdateVotes extends CommandMessage {
   }
 }
 
+export interface UpdateRoom extends CommandMessage {
+  command: 'update_room'
+  roomid: string
+  description: string
+}
+
 export interface Speak extends CommandMessage {
   command: 'speak'
   roomid: string

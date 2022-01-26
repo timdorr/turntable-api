@@ -2,7 +2,17 @@ import Connection, { MessageCallback } from './connection'
 import { sha1 } from './utils'
 
 import type { CommandMessage } from './types/messages'
-import type { AddDJ, Deregistered, NewSong, NoSong, Registered, RemoveDJ, Speak, UpdateVotes } from './types/commands'
+import type {
+  AddDJ,
+  Deregistered,
+  NewSong,
+  NoSong,
+  Registered,
+  RemoveDJ,
+  Speak,
+  UpdateRoom,
+  UpdateVotes
+} from './types/commands'
 
 export type EventHandler<MessageType = CommandMessage> = (m: MessageType) => void
 
@@ -39,6 +49,7 @@ class Turntable {
   on(event: NewSong['command'], handler: EventHandler<NewSong>): void
   on(event: NoSong['command'], handler: EventHandler<NoSong>): void
   on(event: UpdateVotes['command'], handler: EventHandler<UpdateVotes>): void
+  on(event: UpdateRoom['command'], handler: EventHandler<UpdateRoom>): void
   on(event: Speak['command'], handler: EventHandler<Speak>): void
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   on(event: string, handler: EventHandler<any>) {
