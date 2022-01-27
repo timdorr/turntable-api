@@ -50,7 +50,7 @@ class Connection {
     }
   }
 
-  sendMessage(message: APIMessage) {
+  sendMessage<ResponseType = ResponseMessage>(message: APIMessage) {
     const { msgid, clientid, userid, userauth } = this
     const data = JSON.stringify({ msgid, clientid, userid, userauth, ...message })
     if (this.debug) console.log('sendMessage', data)
@@ -58,12 +58,12 @@ class Connection {
     this.socket.send(`~m~${data.length}~m~${data}`)
     this.msgid++
 
-    return new Promise<ResponseMessage>(resolve => {
+    return new Promise<ResponseType>(resolve => {
       const handler = (data: RawData) => {
         const message = this.parseMessage(data)
         if (typeof message == 'object' && 'msgid' in message && message.msgid == msgid) {
           this.socket.off('message', handler)
-          resolve(message)
+          resolve(message as unknown as ResponseType)
         }
       }
 

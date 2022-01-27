@@ -7,12 +7,14 @@ import type {
   Deregistered,
   NewSong,
   NoSong,
+  PMed,
   Registered,
   RemoveDJ,
   Speak,
   UpdateRoom,
   UpdateVotes
 } from './types/commands'
+import { RoomInfo } from './types/actions'
 
 export type EventHandler<MessageType = CommandMessage> = (m: MessageType) => void
 
@@ -51,6 +53,7 @@ class Turntable {
   on(event: UpdateVotes['command'], handler: EventHandler<UpdateVotes>): void
   on(event: UpdateRoom['command'], handler: EventHandler<UpdateRoom>): void
   on(event: Speak['command'], handler: EventHandler<Speak>): void
+  on(event: PMed['command'], handler: EventHandler<PMed>): void
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   on(event: string, handler: EventHandler<any>) {
     this.eventHandlers[event] ? this.eventHandlers[event].push(handler) : (this.eventHandlers[event] = [handler])
@@ -62,7 +65,7 @@ class Turntable {
     } else {
       if (message.command == 'newsong') {
         this.currentDjId = (message as NewSong).room.metadata.current_dj
-        this.currentSongId = (message as NewSong).room.metadata.current_song._id
+        this.currentSongId = (message as NewSong).room.metadata.current_song?._id ?? null
       } else if (message.command == 'nosong') {
         this.currentDjId = null
         this.currentSongId = null
@@ -75,7 +78,13 @@ class Turntable {
   async authenticate() {
     await this.updatePresence()
     await this.setBot()
+
     await this.join(this.options.roomId)
+    this.roomId = this.options.roomId
+
+    const { room } = await this.roomInfo()
+    this.currentDjId = room.metadata.current_dj
+    this.currentSongId = room.metadata.current_song?._id ?? null
   }
 
   updatePresence() {
@@ -87,7 +96,6 @@ class Turntable {
   }
 
   join(roomid: string) {
-    this.roomId = roomid
     return this.conn.sendMessage({ api: 'room.register', roomid })
   }
 
@@ -95,7 +103,7 @@ class Turntable {
     return this.conn.sendMessage({ api: 'room.deregister' })
   }
 
-  roomInfo() {
+  roomInfo(): Promise<RoomInfo> {
     return this.conn.sendMessage({ api: 'room.info', roomid: this.roomId })
   }
 
