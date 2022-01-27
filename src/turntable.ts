@@ -121,6 +121,14 @@ class Turntable {
     return this.conn.sendMessage({ api: 'pm.history', receiverid })
   }
 
+  fan(djid: string) {
+    return this.conn.sendMessage({ api: 'user.become_fan', djid })
+  }
+
+  unfan(djid: string) {
+    return this.conn.sendMessage({ api: 'user.remove_fan', djid })
+  }
+
   addModerator(target_userid: string) {
     return this.conn.sendMessage({ api: 'room.add_moderator', roomid: this.roomId, target_userid })
   }
