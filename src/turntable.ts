@@ -14,7 +14,7 @@ import type {
   UpdateRoom,
   UpdateVotes
 } from './types/commands'
-import { RoomInfo } from './types/actions'
+import type { PMHistory, RoomInfo } from './types/actions'
 
 export type EventHandler<MessageType = CommandMessage> = (m: MessageType) => void
 
@@ -109,6 +109,14 @@ class Turntable {
 
   speak(text: string) {
     return this.conn.sendMessage({ api: 'room.speak', roomid: this.roomId, text })
+  }
+
+  pm(text: string, receiverid: string) {
+    return this.conn.sendMessage({ api: 'pm.send', receiverid, text })
+  }
+
+  pmHistory(receiverid: string): Promise<PMHistory> {
+    return this.conn.sendMessage({ api: 'pm.history', receiverid })
   }
 
   addModerator(target_userid: string) {
