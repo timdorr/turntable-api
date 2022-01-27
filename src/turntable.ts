@@ -10,6 +10,7 @@ import type {
   PMed,
   Registered,
   RemoveDJ,
+  Snagged,
   Speak,
   UpdateRoom,
   UpdateVotes
@@ -50,6 +51,7 @@ class Turntable {
   on(event: RemoveDJ['command'], handler: EventHandler<RemoveDJ>): void
   on(event: NewSong['command'], handler: EventHandler<NewSong>): void
   on(event: NoSong['command'], handler: EventHandler<NoSong>): void
+  on(event: Snagged['command'], handler: EventHandler<Snagged>): void
   on(event: UpdateVotes['command'], handler: EventHandler<UpdateVotes>): void
   on(event: UpdateRoom['command'], handler: EventHandler<UpdateRoom>): void
   on(event: Speak['command'], handler: EventHandler<Speak>): void
@@ -148,6 +150,43 @@ class Turntable {
     })
   }
 
+  async snag() {
+    if (!this.currentSongId) return Promise.resolve(null)
+
+    const sh = sha1(Math.random().toString())
+    const fh = sha1(Math.random().toString())
+    const vh = sha1(
+      [
+        this.options.userId,
+        this.currentDjId,
+        this.currentSongId,
+        this.roomId,
+        'queue',
+        'board',
+        'false',
+        'false',
+        sh
+      ].join('/')
+    )
+
+    await this.conn.sendMessage({
+      api: 'snag.add',
+      djid: this.currentDjId,
+      songid: this.currentSongId,
+      roomid: this.roomId,
+      site: 'queue',
+      location: 'board',
+      in_queue: 'false',
+      blocked: 'false',
+      client: 'web',
+      sh,
+      fh,
+      vh
+    })
+
+    return this.playlistAdd()
+  }
+
   vote(val: 'up' | 'down') {
     if (!this.currentSongId) return Promise.resolve(null)
 
@@ -164,6 +203,14 @@ class Turntable {
 
   voteDown() {
     return this.vote('down')
+  }
+
+  playlistAdd(songId = this.currentSongId, playlist_name = 'default', index = 0) {
+    return this.conn.sendMessage({ api: 'playlist.add', playlist_name, song_dict: { fileid: songId }, index })
+  }
+
+  playlistRemove(index = 0, playlist_name = 'default') {
+    return this.conn.sendMessage({ api: 'playlist.remove', playlist_name, index })
   }
 }
 

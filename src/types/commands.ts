@@ -40,6 +40,12 @@ export interface NoSong extends CommandMessage {
   room: Room
 }
 
+export interface Snagged extends CommandMessage {
+  command: 'snagged'
+  roomid: string
+  userid: string
+}
+
 export interface UpdateVotes extends CommandMessage {
   command: 'update_votes'
   roomid: string
