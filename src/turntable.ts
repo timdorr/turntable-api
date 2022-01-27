@@ -141,6 +141,8 @@ class Turntable {
   }
 
   vote(val: 'up' | 'down') {
+    if (!this.currentSongId) return Promise.resolve(null)
+
     const vh = sha1(this.roomId + val + this.currentSongId)
     const th = sha1(Math.random().toString())
     const ph = sha1(Math.random().toString())
