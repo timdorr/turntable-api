@@ -213,7 +213,7 @@ class Turntable {
     return this.vote('down')
   }
 
-  playlistAdd(songId = this.currentSongId, playlist_name = 'default', index = 0) {
+  playlistAdd(songId = this.currentSongId, playlist_name = 'default', index = -1) {
     return this.conn.sendMessage({ api: 'playlist.add', playlist_name, song_dict: { fileid: songId }, index })
   }
 
